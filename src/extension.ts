@@ -23,12 +23,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const presetTreeDataProvider = new PresetTreeDataProvider();
   const targetTreeDataProvider = new TargetTreeDataProvider();
 
-  const presetsTreeView = vscode.window.createTreeView('myPlugin.presets', {
+  const presetsTreeView = vscode.window.createTreeView('psgmrunner.presets', {
     treeDataProvider: presetTreeDataProvider,
     showCollapseAll: false,
   });
 
-  const targetsTreeView = vscode.window.createTreeView('myPlugin.targets', {
+  const targetsTreeView = vscode.window.createTreeView('psgmrunner.targets', {
     treeDataProvider: targetTreeDataProvider,
     showCollapseAll: true,
   });
@@ -52,11 +52,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   const refresh = async (preferredPresetName?: string): Promise<void> => {
     presets = await presetProvider.loadPresets();
-    const storedPresetName = preferredPresetName ?? context.workspaceState.get<string>('myPlugin.selectedPreset');
+    const storedPresetName = preferredPresetName ?? context.workspaceState.get<string>('psgmrunner.selectedPreset');
     currentPreset = presets.find((preset) => preset.name === storedPresetName) ?? presets[0];
 
     if (currentPreset) {
-      await context.workspaceState.update('myPlugin.selectedPreset', currentPreset.name);
+      await context.workspaceState.update('psgmrunner.selectedPreset', currentPreset.name);
     }
 
     presetTreeDataProvider.setPresets(presets, currentPreset?.name);
@@ -117,10 +117,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   };
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('myPlugin.refresh', async () => {
+    vscode.commands.registerCommand('psgmrunner.refresh', async () => {
       await refresh(currentPreset?.name);
     }),
-    vscode.commands.registerCommand('myPlugin.selectPreset', async (item?: PresetTreeItem) => {
+    vscode.commands.registerCommand('psgmrunner.selectPreset', async (item?: PresetTreeItem) => {
       if (!item) {
         const pick = await vscode.window.showQuickPick(
           presets.map((preset) => ({ label: preset.displayName, description: preset.name, preset })),
@@ -136,7 +136,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         currentPreset = item.preset;
       }
 
-      await context.workspaceState.update('myPlugin.selectedPreset', currentPreset.name);
+      await context.workspaceState.update('psgmrunner.selectedPreset', currentPreset.name);
       presetTreeDataProvider.setPresets(presets, currentPreset.name);
       await updateTargets();
 
@@ -149,7 +149,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         }
       }
     }),
-    vscode.commands.registerCommand('myPlugin.buildTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
+    vscode.commands.registerCommand('psgmrunner.buildTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
       const preset = ensurePreset();
       if (!preset) {
         return;
@@ -162,7 +162,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       await workflowManager.buildTarget(preset, target);
     }),
-    vscode.commands.registerCommand('myPlugin.runTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
+    vscode.commands.registerCommand('psgmrunner.runTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
       const preset = ensurePreset();
       if (!preset) {
         return;
@@ -175,7 +175,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       await workflowManager.runTarget(preset, target);
     }),
-    vscode.commands.registerCommand('myPlugin.debugTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
+    vscode.commands.registerCommand('psgmrunner.debugTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
       const preset = ensurePreset();
       if (!preset) {
         return;

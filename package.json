@@ -27,43 +27,43 @@
     "contributes": {
         "commands": [
             {
-                "command": "myPlugin.refresh",
-                "title": "CMake Runner: Refresh"
+                "command": "psgmrunner.refresh",
+                "title": "psgmrunner: Refresh"
             },
             {
-                "command": "myPlugin.selectPreset",
-                "title": "CMake Runner: Select Preset"
+                "command": "psgmrunner.selectPreset",
+                "title": "psgmrunner: Select Preset"
             },
             {
-                "command": "myPlugin.buildTarget",
-                "title": "CMake Runner: Build Target"
+                "command": "psgmrunner.buildTarget",
+                "title": "psgmrunner: Build Target"
             },
             {
-                "command": "myPlugin.runTarget",
-                "title": "CMake Runner: Run Target"
+                "command": "psgmrunner.runTarget",
+                "title": "psgmrunner: Run Target"
             },
             {
-                "command": "myPlugin.debugTarget",
-                "title": "CMake Runner: Debug Target"
+                "command": "psgmrunner.debugTarget",
+                "title": "psgmrunner: Debug Target"
             }
         ],
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "myPlugin",
+                    "id": "psgmrunner",
                     "title": "psgmrunner",
                     "icon": "resources/cmake-runner.svg"
                 }
             ]
         },
         "views": {
-            "myPlugin": [
+            "psgmrunner": [
                 {
-                    "id": "myPlugin.presets",
+                    "id": "psgmrunner.presets",
                     "name": "Presets"
                 },
                 {
-                    "id": "myPlugin.targets",
+                    "id": "psgmrunner.targets",
                     "name": "Targets"
                 }
             ]
@@ -71,30 +71,30 @@
         "menus": {
             "view/title": [
                 {
-                    "command": "myPlugin.refresh",
-                    "when": "view == myPlugin.presets || view == myPlugin.targets",
+                    "command": "psgmrunner.refresh",
+                    "when": "view == psgmrunner.presets || view == psgmrunner.targets",
                     "group": "navigation"
                 }
             ],
             "view/item/context": [
                 {
-                    "command": "myPlugin.selectPreset",
-                    "when": "view == myPlugin.presets && viewItem == preset",
+                    "command": "psgmrunner.selectPreset",
+                    "when": "view == psgmrunner.presets && viewItem == preset",
                     "group": "inline@1"
                 },
                 {
-                    "command": "myPlugin.buildTarget",
-                    "when": "view == myPlugin.targets && viewItem == target",
+                    "command": "psgmrunner.buildTarget",
+                    "when": "view == psgmrunner.targets && viewItem == target",
                     "group": "inline@1"
                 },
                 {
-                    "command": "myPlugin.runTarget",
-                    "when": "view == myPlugin.targets && viewItem == target",
+                    "command": "psgmrunner.runTarget",
+                    "when": "view == psgmrunner.targets && viewItem == target",
                     "group": "inline@2"
                 },
                 {
-                    "command": "myPlugin.debugTarget",
-                    "when": "view == myPlugin.targets && viewItem == target",
+                    "command": "psgmrunner.debugTarget",
+                    "when": "view == psgmrunner.targets && viewItem == target",
                     "group": "inline@3"
                 }
             ]
@@ -102,17 +102,17 @@
         "configuration": {
             "title": "psgmrunner",
             "properties": {
-                "myPlugin.tasks.buildCommandTemplate": {
+                "psgmrunner.tasks.buildCommandTemplate": {
                     "type": "string",
                     "default": "cmake --build ${buildDir} --config ${preset} --target ${target}",
                     "description": "Build command template. Supports ${buildDir}, ${preset}, ${target}, and ${sourceDir}."
                 },
-                "myPlugin.tasks.runCommandTemplate": {
+                "psgmrunner.tasks.runCommandTemplate": {
                     "type": "string",
                     "default": "${buildDir}/${target}",
                     "description": "Run command template. Supports ${buildDir}, ${preset}, ${target}, and ${sourceDir}."
                 },
-                "myPlugin.tasks.clearTerminalBeforeRun": {
+                "psgmrunner.tasks.clearTerminalBeforeRun": {
                     "type": "boolean",
                     "default": true,
                     "description": "Clear the shared terminal before starting a build or run task."

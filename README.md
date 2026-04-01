@@ -36,9 +36,9 @@ This repository currently contains the extension source code and a packaged arti
 ### 5. Extension settings
 The extension contributes the following settings:
 
-- `myPlugin.tasks.buildCommandTemplate`
-- `myPlugin.tasks.runCommandTemplate`
-- `myPlugin.tasks.clearTerminalBeforeRun`
+- `psgmrunner.tasks.buildCommandTemplate`
+- `psgmrunner.tasks.runCommandTemplate`
+- `psgmrunner.tasks.clearTerminalBeforeRun`
 
 Supported variables:
 
@@ -144,9 +144,9 @@ Add settings in your workspace or user `settings.json`:
 
 ```json
 {
-  "myPlugin.tasks.buildCommandTemplate": "cmake --build ${buildDir} --config ${preset} --target ${target}",
-  "myPlugin.tasks.runCommandTemplate": "${buildDir}/${target}",
-  "myPlugin.tasks.clearTerminalBeforeRun": true
+  "psgmrunner.tasks.buildCommandTemplate": "cmake --build ${buildDir} --config ${preset} --target ${target}",
+  "psgmrunner.tasks.runCommandTemplate": "${buildDir}/${target}",
+  "psgmrunner.tasks.clearTerminalBeforeRun": true
 }
 ```
 
@@ -160,7 +160,7 @@ Example:
 
 ```json
 {
-  "myPlugin.tasks.runCommandTemplate": "${buildDir}/${target}.exe"
+  "psgmrunner.tasks.runCommandTemplate": "${buildDir}/${target}.exe"
 }
 ```
 

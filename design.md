@@ -22,7 +22,7 @@
 * **TreeView Provider**：提供侧边栏数据源。
   * **Presets 视图**：展示可用的 CMake 配置项。
   * **Targets 视图**：展示“可执行文件”为父节点、“源码文件”为子节点的树形结构。
-* **Command Register**：注册供 UI 调用的命令（如 `myPlugin.build`, `myPlugin.debugTarget`）。
+* **Command Register**：注册供 UI 调用的命令（如 `psgmrunner.build`, `psgmrunner.debugTarget`）。
 * **Editor Sync Listener**：监听 `onDidChangeActiveTextEditor` 事件，实现打开文件时 TreeView 的自动定位高亮。
 
 ### 3.2 核心服务层 (Core Services)
@@ -55,9 +55,9 @@
 
 | 设置项键名 (Key) | 类型 | 默认值 | 作用描述 |
 | :--- | :--- | :--- | :--- |
-| `myPlugin.tasks.buildCommandTemplate` | String | `cmake --build ${buildDir} --config ${preset} --target ${target}` | 构建阶段执行的命令，支持动态变量替换。 |
-| `myPlugin.tasks.runCommandTemplate` | String | `${buildDir}/${target}` | 非调试模式下直接运行的目标路径或命令。 |
-| `myPlugin.tasks.clearTerminalBeforeRun`| Boolean | `true` | 在触发构建或运行任务前，是否清理终端输出。 |
+| `psgmrunner.tasks.buildCommandTemplate` | String | `cmake --build ${buildDir} --config ${preset} --target ${target}` | 构建阶段执行的命令，支持动态变量替换。 |
+| `psgmrunner.tasks.runCommandTemplate` | String | `${buildDir}/${target}` | 非调试模式下直接运行的目标路径或命令。 |
+| `psgmrunner.tasks.clearTerminalBeforeRun`| Boolean | `true` | 在触发构建或运行任务前，是否清理终端输出。 |
 
 **支持的内置变量：**
 * `${buildDir}`：当前选中的 Preset 解析出的构建目录。

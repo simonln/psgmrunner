@@ -29,7 +29,7 @@ export class TaskExecutionEngine {
       },
       vscode.TaskScope.Workspace,
       label,
-      'myPlugin',
+      'psgmrunner',
       new vscode.ShellExecution(command, { cwd: this.workspaceRoot }),
       problemMatchers,
     );
