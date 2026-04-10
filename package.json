@@ -17,8 +17,10 @@
     "main": "./out/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./"
+        "clean": "node -e \"require('fs').rmSync('out', { recursive: true, force: true })\"",
+        "compile": "npm run clean && tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "package:vsix": "npx @vscode/vsce package --allow-missing-repository"
     },
     "devDependencies": {
         "@types/node": "^20.11.30",
