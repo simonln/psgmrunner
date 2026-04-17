@@ -14,70 +14,61 @@ export class WorkflowManager {
   ) {}
 
   public async buildPreset(preset: PresetInfo): Promise<boolean> {
-    // this.logger.info(`Starting configure for preset ${preset.name}`);
     await this.ensureCMakeFileApiQuery(preset);
     const variables = this.createPresetVariables(preset);
     const command = this.configurationManager.getPresetConfigureCommand(variables);
-    const label = `Configure [${preset.name}]`;
-    const result = await this.taskExecutionEngine.executeBuild(command, label, vscode.TaskRevealKind.Never);
-
-    if (result.exitCode === 0) {
-    //   this.logger.info(`Configure succeeded for preset ${preset.name}`);
-      return true;
-    }
-
-    if (typeof result.exitCode === 'number') {
-      this.logger.error(`Configure failed for preset ${preset.name} with exit code ${result.exitCode}`);
-      void vscode.window.showErrorMessage(`Configure failed for preset ${preset.displayName}. Exit code: ${result.exitCode}`);
-    }
-
-    return false;
+    return this.executeBuildStep({
+      command,
+      label: `Configure [${preset.name}]`,
+      reveal: vscode.TaskRevealKind.Never,
+      logName: preset.name,
+      displayName: preset.displayName,
+      failureVerb: 'Configure',
+    });
   }
 
   public async buildTarget(preset: PresetInfo, target: TargetInfo): Promise<void> {
-    // this.logger.info(`Starting build for target ${target.name} with preset ${preset.name}`);
     const variables = this.createVariables(preset, target);
     const command = this.configurationManager.getBuildCommand(variables);
-    const label = `Build ${target.displayName} [${preset.name}]`;
-    const result = await this.taskExecutionEngine.executeBuild(command, label, vscode.TaskRevealKind.Never);
+    const built = await this.executeBuildStep({
+      command,
+      label: `Build ${target.displayName} [${preset.name}]`,
+      reveal: vscode.TaskRevealKind.Never,
+      logName: target.name,
+      displayName: target.displayName,
+      failureVerb: 'Build',
+    });
 
-    if (result.exitCode === 0) {
-    //   this.logger.info(`Build succeeded for target ${target.name}`);
-      const action = await vscode.window.showInformationMessage(
-        `Target ${target.displayName} built successfully.`,
-        'Run',
-        'Debug',
-      );
-
-      if (action === 'Run') {
-        await this.runTarget(preset, target, false);
-      }
-
-      if (action === 'Debug') {
-        await this.startDebugging(preset, target);
-      }
-
+    if (!built) {
       return;
     }
 
-    if (typeof result.exitCode === 'number') {
-      this.logger.error(`Build failed for target ${target.name} with exit code ${result.exitCode}`);
-      void vscode.window.showErrorMessage(`Build failed for target ${target.displayName}. Exit code: ${result.exitCode}`);
+    const action = await vscode.window.showInformationMessage(
+      `Target ${target.displayName} built successfully.`,
+      'Run',
+      'Debug',
+    );
+
+    if (action === 'Run') {
+      await this.runTarget(preset, target, false);
+    }
+
+    if (action === 'Debug') {
+      await this.startDebugging(preset, target);
     }
   }
 
   public async runTarget(preset: PresetInfo, target: TargetInfo, buildFirst = true): Promise<void> {
-    // this.logger.info(`Starting run for target ${target.name} with preset ${preset.name}. buildFirst=${buildFirst}`);
     if (buildFirst) {
       const buildVariables = this.createVariables(preset, target);
-      const buildCommand = this.configurationManager.getBuildCommand(buildVariables);
-      const buildLabel = `Build ${target.displayName} [${preset.name}]`;
-      const buildResult = await this.taskExecutionEngine.executeBuild(buildCommand, buildLabel);
-      if (buildResult.exitCode !== 0) {
-        if (typeof buildResult.exitCode === 'number') {
-          this.logger.error(`Pre-run build failed for target ${target.name} with exit code ${buildResult.exitCode}`);
-          void vscode.window.showErrorMessage(`Build failed for target ${target.displayName}. Exit code: ${buildResult.exitCode}`);
-        }
+      const built = await this.executeBuildStep({
+        command: this.configurationManager.getBuildCommand(buildVariables),
+        label: `Build ${target.displayName} [${preset.name}]`,
+        logName: target.name,
+        displayName: target.displayName,
+        failureVerb: 'Build',
+      });
+      if (!built) {
         return;
       }
     }
@@ -90,21 +81,17 @@ export class WorkflowManager {
   }
 
   public async debugTarget(preset: PresetInfo, target: TargetInfo): Promise<void> {
-    // this.logger.info(`Starting debug flow for target ${target.name} with preset ${preset.name}`);
     const buildVariables = this.createVariables(preset, target);
-    const buildCommand = this.configurationManager.getBuildCommand(buildVariables);
-    const buildLabel = `Build ${target.displayName} [${preset.name}]`;
-    const result = await this.taskExecutionEngine.executeBuild(buildCommand, buildLabel);
+    const built = await this.executeBuildStep({
+      command: this.configurationManager.getBuildCommand(buildVariables),
+      label: `Build ${target.displayName} [${preset.name}]`,
+      logName: target.name,
+      displayName: target.displayName,
+      failureVerb: 'Build',
+    });
 
-    if (result.exitCode === 0) {
-    //   this.logger.info(`Build before debug succeeded for target ${target.name}`);
+    if (built) {
       await this.startDebugging(preset, target);
-      return;
-    }
-
-    if (typeof result.exitCode === 'number') {
-      this.logger.error(`Build before debug failed for target ${target.name} with exit code ${result.exitCode}`);
-      void vscode.window.showErrorMessage(`Build failed for target ${target.displayName}. Exit code: ${result.exitCode}`);
     }
   }
 
@@ -159,6 +146,41 @@ export class WorkflowManager {
       executableCommand: process.platform === 'win32' ? `& ${quotedExecutablePath}` : quotedExecutablePath,
       buildPresetArgument: preset.buildPresetName ? ` --preset ${preset.buildPresetName}` : '',
     };
+  }
+
+  private async executeBuildStep(options: {
+    command: string;
+    label: string;
+    logName: string;
+    displayName: string;
+    failureVerb: string;
+    reveal?: vscode.TaskRevealKind;
+  }): Promise<boolean> {
+    const result = await this.taskExecutionEngine.executeBuild(
+      options.command,
+      options.label,
+      options.reveal ?? vscode.TaskRevealKind.Always,
+    );
+    if (result.exitCode === 0) {
+      return true;
+    }
+
+    this.reportBuildFailure(options.failureVerb, options.logName, options.displayName, result.exitCode);
+    return false;
+  }
+
+  private reportBuildFailure(
+    failureVerb: string,
+    logName: string,
+    displayName: string,
+    exitCode: number | undefined,
+  ): void {
+    if (typeof exitCode !== 'number') {
+      return;
+    }
+
+    this.logger.error(`${failureVerb} failed for ${logName} with exit code ${exitCode}`);
+    void vscode.window.showErrorMessage(`${failureVerb} failed for ${displayName}. Exit code: ${exitCode}`);
   }
 
   private async ensureCMakeFileApiQuery(preset: PresetInfo): Promise<void> {
