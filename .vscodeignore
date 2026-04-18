@@ -4,8 +4,13 @@ design.md
 .gitignore
 .kilo/**
 node_modules/**
+test/**
+out/test/**
 **/*.ts
 **/*.tsbuildinfo
 # 排除 Source Map 文件
 **/*.map        
 doc/**
+
+AGENTS.md
+TESTING.md

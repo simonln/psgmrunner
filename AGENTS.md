@@ -37,6 +37,8 @@ npx @vscode/vsce package --allow-missing-repository   # Build VSIX
 | `psgmrunner.runTarget` | Run target |
 | `psgmrunner.debugTarget` | Debug target |
 
-## No test framework
+## Test Commands
 
-This repo has no test suite. Verify changes by F5 debugging.
+```bash
+npm test
+```
