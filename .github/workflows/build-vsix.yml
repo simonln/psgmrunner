@@ -34,6 +34,9 @@ jobs:
       - name: Compile extension
         run: npm run compile
 
+      - name: Run unit tests
+        run: npm test
+
       - name: Package VSIX
         run: npm run package:vsix
 
