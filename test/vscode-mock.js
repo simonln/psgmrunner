@@ -66,6 +66,7 @@ const vscode = {
         options,
         description: undefined,
         message: undefined,
+        visible: true,
         reveal: async () => undefined,
         dispose: () => { createdTreeViews.delete(id); },
       };
