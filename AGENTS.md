@@ -15,7 +15,7 @@ npx @vscode/vsce package --allow-missing-repository   # Build VSIX
 
 - Entry point: `src/extension.ts`
 - Output: `out/` (generated, never edit manually)
-- Two tree views: `psgmrunner.presets`, `psgmrunner.targets`
+- Two tree views: `cmakerunner.presets`, `cmakerunner.targets`
 - Services: `src/services/` (preset, target, mapping, workflow, config, output)
 - UI providers: `src/ui/` (tree data providers)
 
@@ -31,11 +31,11 @@ npx @vscode/vsce package --allow-missing-repository   # Build VSIX
 
 | Command | Description |
 |---------|-------------|
-| `psgmrunner.refresh` | Refresh presets and targets |
-| `psgmrunner.buildPreset` | Run preset configure |
-| `psgmrunner.buildTarget` | Build target |
-| `psgmrunner.runTarget` | Run target |
-| `psgmrunner.debugTarget` | Debug target |
+| `cmakerunner.refresh` | Refresh presets and targets |
+| `cmakerunner.buildPreset` | Run preset configure |
+| `cmakerunner.buildTarget` | Build target |
+| `cmakerunner.runTarget` | Run target |
+| `cmakerunner.debugTarget` | Debug target |
 
 ## Test Commands
 

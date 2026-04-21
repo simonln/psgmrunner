@@ -22,7 +22,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   }
 
   const workspaceRoot = workspaceFolder.uri.fsPath;
-  const outputChannel = vscode.window.createOutputChannel('PSGM Runner');
+  const outputChannel = vscode.window.createOutputChannel('CMake Runner');
   const logger = new OutputLogger(outputChannel);
   const configurationManager = new ConfigurationManager();
   const presetProvider = new PresetProvider(workspaceRoot, logger);
@@ -34,12 +34,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   logger.info(`Extension activated for workspace: ${workspaceRoot}`);
 
-  const presetsTreeView = vscode.window.createTreeView('psgmrunner.presets', {
+  const presetsTreeView = vscode.window.createTreeView('cmakerunner.presets', {
     treeDataProvider: presetTreeDataProvider,
     showCollapseAll: false,
   });
 
-  const targetsTreeView = vscode.window.createTreeView('psgmrunner.targets', {
+  const targetsTreeView = vscode.window.createTreeView('cmakerunner.targets', {
     treeDataProvider: targetTreeDataProvider,
     showCollapseAll: true,
   });
@@ -52,7 +52,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     targetsTreeView.message = filterText && targetTreeDataProvider.getVisibleTargetCount() === 0
       ? 'No executable target matches the current filter.'
       : undefined;
-    await vscode.commands.executeCommand('setContext', 'psgmrunner.targetsFilterActive', !!filterText);
+    await vscode.commands.executeCommand('setContext', 'cmakerunner.targetsFilterActive', !!filterText);
   };
 
   const applyTargetFilter = async (filterText: string): Promise<void> => {
@@ -66,7 +66,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const selectPreset = async (preset: PresetInfo): Promise<void> => {
     logger.info(`Selecting preset: ${preset.name}`);
     currentPreset = preset;
-    await context.workspaceState.update('psgmrunner.selectedPreset', currentPreset.name);
+    await context.workspaceState.update('cmakerunner.selectedPreset', currentPreset.name);
     presetTreeDataProvider.setPresets(presets, currentPreset.name);
     // await updateTargets();
 
@@ -102,11 +102,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   const refresh = async (preferredPresetName?: string): Promise<void> => {
     // logger.info(`Refreshing presets. preferredPreset=${preferredPresetName ?? 'none'}`);
     presets = await presetProvider.loadPresets();
-    const storedPresetName = preferredPresetName ?? context.workspaceState.get<string>('psgmrunner.selectedPreset');
+    const storedPresetName = preferredPresetName ?? context.workspaceState.get<string>('cmakerunner.selectedPreset');
     currentPreset = presets.find((preset) => preset.name === storedPresetName) ?? presets[0];
 
     if (currentPreset) {
-      await context.workspaceState.update('psgmrunner.selectedPreset', currentPreset.name);
+      await context.workspaceState.update('cmakerunner.selectedPreset', currentPreset.name);
     }
 
     // logger.info(`Refresh completed. presets=${presets.length}, selected=${currentPreset?.name ?? 'none'}`);
@@ -280,10 +280,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   };
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('psgmrunner.refresh', async () => {
+    vscode.commands.registerCommand('cmakerunner.refresh', async () => {
       await refresh(currentPreset?.name);
     }),
-    vscode.commands.registerCommand('psgmrunner.filterTargets', async () => {
+    vscode.commands.registerCommand('cmakerunner.filterTargets', async () => {
       const pick = await pickTarget({ includeCustomTextFilter: true });
       if (!pick) {
         return;
@@ -306,10 +306,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       await applyTargetFilter(filterText);
     }),
-    vscode.commands.registerCommand('psgmrunner.clearTargetFilter', async () => {
+    vscode.commands.registerCommand('cmakerunner.clearTargetFilter', async () => {
       await applyTargetFilter('');
     }),
-    vscode.commands.registerCommand('psgmrunner.selectPreset', async (item?: PresetTreeItem) => {
+    vscode.commands.registerCommand('cmakerunner.selectPreset', async (item?: PresetTreeItem) => {
       if (!item) {
         const pick = await vscode.window.showQuickPick(
           presets.map((preset) => ({ label: preset.displayName, description: preset.name, preset })),
@@ -326,7 +326,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       await selectPreset(item.preset);
     }),
-    vscode.commands.registerCommand('psgmrunner.buildPreset', async (item?: PresetTreeItem) => {
+    vscode.commands.registerCommand('cmakerunner.buildPreset', async (item?: PresetTreeItem) => {
     //   logger.info(`Build preset command invoked. requestedPreset=${item?.preset.name ?? currentPreset?.name ?? 'none'}`);
       const preset = item?.preset ?? ensurePreset();
       if (!preset) {
@@ -353,7 +353,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         `Preset ${preset.displayName} configured successfully. Targets: ${targetSummary}`,
       );
     }),
-    vscode.commands.registerCommand('psgmrunner.rebuildPreset', async (item?: PresetTreeItem) => {
+    vscode.commands.registerCommand('cmakerunner.rebuildPreset', async (item?: PresetTreeItem) => {
       const preset = item?.preset ?? ensurePreset();
       if (!preset) {
         return;
@@ -384,7 +384,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         `Preset ${preset.displayName} rebuilt successfully. Targets: ${targetSummary}`,
       );
     }),
-    vscode.commands.registerCommand('psgmrunner.buildTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
+    vscode.commands.registerCommand('cmakerunner.buildTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
       const preset = ensurePreset();
       if (!preset) {
         return;
@@ -397,7 +397,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       await workflowManager.buildTarget(preset, target);
     }),
-    vscode.commands.registerCommand('psgmrunner.buildTargetFromCurrentFile', async () => {
+    vscode.commands.registerCommand('cmakerunner.buildTargetFromCurrentFile', async () => {
       const preset = ensurePreset();
       if (!preset) {
         return;
@@ -410,7 +410,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       await workflowManager.buildTarget(preset, pick.target);
     }),
-    vscode.commands.registerCommand('psgmrunner.runTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
+    vscode.commands.registerCommand('cmakerunner.runTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
       const preset = ensurePreset();
       if (!preset) {
         return;
@@ -423,7 +423,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       await workflowManager.runTarget(preset, target);
     }),
-    vscode.commands.registerCommand('psgmrunner.debugTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
+    vscode.commands.registerCommand('cmakerunner.debugTarget', async (item?: TargetTreeItem | SourceTreeItem) => {
       const preset = ensurePreset();
       if (!preset) {
         return;

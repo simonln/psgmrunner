@@ -48,7 +48,7 @@ export class TaskExecutionEngine {
       },
       vscode.TaskScope.Workspace,
       label,
-      'psgmrunner',
+      'cmakerunner',
       shellExecution,
       problemMatchers,
     );

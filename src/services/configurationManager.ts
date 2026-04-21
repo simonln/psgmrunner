@@ -28,6 +28,6 @@ export class ConfigurationManager {
   }
 
   private settings(): vscode.WorkspaceConfiguration {
-    return vscode.workspace.getConfiguration('psgmrunner');
+    return vscode.workspace.getConfiguration('cmakerunner');
   }
 }

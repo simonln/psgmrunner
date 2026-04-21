@@ -55,7 +55,7 @@ class ConfigurationManager {
         return inferredProgram || variables.executablePath || (0, utils_1.getDefaultExecutablePath)(variables.buildDir, variables.target);
     }
     settings() {
-        return vscode.workspace.getConfiguration('psgmrunner');
+        return vscode.workspace.getConfiguration('cmakerunner');
     }
 }
 exports.ConfigurationManager = ConfigurationManager;

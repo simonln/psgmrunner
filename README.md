@@ -1,8 +1,8 @@
-# psgmrunner
+# CMake Runner
 
 English documentation is the default in this file. For the Chinese version, see `doc/README.zh-CN.md`.
 
-`psgmrunner` is a VS Code extension for CMake-based C++ projects. It puts the common workflow of **select preset -> configure -> discover executable targets -> build -> run/debug** into a dedicated sidebar.
+`CMake Runner` is a VS Code extension for CMake-based C++ projects. It puts the common workflow of **select preset -> configure -> discover executable targets -> build -> run/debug** into a dedicated sidebar.
 
 It is designed for projects that already use `CMakePresets.json` and want a more direct way to work from the current source file back to the executable target that owns it.
 
@@ -67,7 +67,7 @@ On Windows, CMake-based tasks are wrapped with `vcvarsall.bat` automatically whe
 ### Install from the command line
 
 ```bash
-code --install-extension psgmrunner-0.0.4.vsix
+code --install-extension cmakerunner-0.0.8.vsix
 ```
 
 ## Quick Start
@@ -78,7 +78,7 @@ Open a CMake project folder that contains `CMakePresets.json`. The extension act
 
 ### 2. Select a preset
 
-Open the `psgmrunner` activity bar item and choose a configure preset in the **Presets** view.
+Open the `cmakerunner` activity bar item and choose a configure preset in the **Presets** view.
 
 ### 3. Configure and discover targets
 
@@ -120,14 +120,14 @@ Use `Clear Filter` to remove the current filter.
 
 The extension currently contributes these commands:
 
-- `psgmrunner.refresh`: reload presets and rebuild the current targets view
-- `psgmrunner.selectPreset`: choose the active configure preset
-- `psgmrunner.buildPreset`: configure the selected preset and refresh targets
-- `psgmrunner.buildTarget`: build the resolved target
-- `psgmrunner.runTarget`: build and run the resolved target
-- `psgmrunner.debugTarget`: build and debug the resolved target
-- `psgmrunner.filterTargets`: filter visible targets and source nodes
-- `psgmrunner.clearTargetFilter`: clear the current target filter
+- `cmakerunner.refresh`: reload presets and rebuild the current targets view
+- `cmakerunner.selectPreset`: choose the active configure preset
+- `cmakerunner.buildPreset`: configure the selected preset and refresh targets
+- `cmakerunner.buildTarget`: build the resolved target
+- `cmakerunner.runTarget`: build and run the resolved target
+- `cmakerunner.debugTarget`: build and debug the resolved target
+- `cmakerunner.filterTargets`: filter visible targets and source nodes
+- `cmakerunner.clearTargetFilter`: clear the current target filter
 
 ## Configuration
 
@@ -135,11 +135,11 @@ The extension exposes these settings in VS Code `settings.json`:
 
 | Setting | Default | Description |
 | --- | --- | --- |
-| `psgmrunner.cmakePath` | `""` | Optional path to `cmake` executable for preset discovery. Useful when CMake is bundled with Visual Studio but not on `PATH`. |
-| `psgmrunner.tasks.presetConfigureCommandTemplate` | `cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON` | Configure command template used for preset builds |
-| `psgmrunner.tasks.buildCommandTemplate` | `cmake --build ${buildDir}${configurationArgument} --target ${target}` | Build command template used for targets |
-| `psgmrunner.tasks.runCommandTemplate` | `${executableCommand}` | Run command template used for targets |
-| `psgmrunner.tasks.clearTerminalBeforeRun` | `true` | Clears the shared terminal before build or run tasks |
+| `cmakerunner.cmakePath` | `""` | Optional path to `cmake` executable for preset discovery. Useful when CMake is bundled with Visual Studio but not on `PATH`. |
+| `cmakerunner.tasks.presetConfigureCommandTemplate` | `cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON` | Configure command template used for preset builds |
+| `cmakerunner.tasks.buildCommandTemplate` | `cmake --build ${buildDir}${configurationArgument} --target ${target}` | Build command template used for targets |
+| `cmakerunner.tasks.runCommandTemplate` | `${executableCommand}` | Run command template used for targets |
+| `cmakerunner.tasks.clearTerminalBeforeRun` | `true` | Clears the shared terminal before build or run tasks |
 
 ### Supported variables for configure templates
 
@@ -165,11 +165,11 @@ The extension exposes these settings in VS Code `settings.json`:
 
 ```json
 {
-  "psgmrunner.cmakePath": "C:/Program Files/Microsoft Visual Studio/2022/Professional/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe",
-  "psgmrunner.tasks.presetConfigureCommandTemplate": "cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-  "psgmrunner.tasks.buildCommandTemplate": "cmake --build ${buildDir}${configurationArgument} --target ${target}",
-  "psgmrunner.tasks.runCommandTemplate": "${executableCommand}",
-  "psgmrunner.tasks.clearTerminalBeforeRun": true
+  "cmakerunner.cmakePath": "C:/Program Files/Microsoft Visual Studio/2022/Professional/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe",
+  "cmakerunner.tasks.presetConfigureCommandTemplate": "cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+  "cmakerunner.tasks.buildCommandTemplate": "cmake --build ${buildDir}${configurationArgument} --target ${target}",
+  "cmakerunner.tasks.runCommandTemplate": "${executableCommand}",
+  "cmakerunner.tasks.clearTerminalBeforeRun": true
 }
 ```
 
@@ -179,7 +179,7 @@ If you want to make the PowerShell invocation explicit, you can override the run
 
 ```json
 {
-  "psgmrunner.tasks.runCommandTemplate": "& ${quotedExecutablePath}"
+  "cmakerunner.tasks.runCommandTemplate": "& ${quotedExecutablePath}"
 }
 ```
 

@@ -92,7 +92,7 @@ describe('ui', () => {
         description: 'Debug preset',
       };
       const item = new PresetTreeItem(preset, false);
-      assert.strictEqual(item.command?.command, 'psgmrunner.selectPreset');
+      assert.strictEqual(item.command?.command, 'cmakerunner.selectPreset');
       assert.ok(String(item.tooltip).includes('/build/debug'));
     });
   });

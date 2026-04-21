@@ -23,7 +23,7 @@
   - `Presets` 视图：展示可用 configure preset
   - `Targets` 视图：展示可执行目标及其源码文件
 - **Command Register**
-  - 注册 `psgmrunner.buildTarget`、`psgmrunner.debugTarget` 等命令
+  - 注册 `cmakerunner.buildTarget`、`cmakerunner.debugTarget` 等命令
 - **Editor Sync Listener**
   - 监听 `onDidChangeActiveTextEditor`，实现源码文件与 TreeView 联动
 
@@ -73,10 +73,10 @@
 
 | 设置项键名 | 类型 | 默认值 | 作用 |
 | --- | --- | --- | --- |
-| `psgmrunner.tasks.buildCommandTemplate` | `string` | `cmake --build ${buildDir}${configurationArgument} --target ${target}` | 构建目标命令模板 |
-| `psgmrunner.tasks.presetConfigureCommandTemplate` | `string` | `cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON` | preset configure 命令模板 |
-| `psgmrunner.tasks.runCommandTemplate` | `string` | `${executableCommand}` | 运行目标命令模板 |
-| `psgmrunner.tasks.clearTerminalBeforeRun` | `boolean` | `true` | 执行前是否清理终端 |
+| `cmakerunner.tasks.buildCommandTemplate` | `string` | `cmake --build ${buildDir}${configurationArgument} --target ${target}` | 构建目标命令模板 |
+| `cmakerunner.tasks.presetConfigureCommandTemplate` | `string` | `cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON` | preset configure 命令模板 |
+| `cmakerunner.tasks.runCommandTemplate` | `string` | `${executableCommand}` | 运行目标命令模板 |
+| `cmakerunner.tasks.clearTerminalBeforeRun` | `boolean` | `true` | 执行前是否清理终端 |
 
 ### 支持变量
 

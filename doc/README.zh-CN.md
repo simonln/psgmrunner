@@ -1,8 +1,6 @@
-# psgmrunner
+# CMake Runner
 
-默认英文文档位于仓库根目录 `README.md`。本文档是对应的中文版本。
-
-`psgmrunner` 是一个面向基于 CMake 的 C++ 项目的 VS Code 扩展。它把常见的 **选择 preset -> configure -> 发现可执行目标 -> 构建 -> 运行/调试** 工作流放进一个专用侧边栏中。
+`CMake Runner` 是一个面向基于 CMake 的 C++ 项目的 VS Code 扩展。它把常见的 **选择 preset -> configure -> 发现可执行目标 -> 构建 -> 运行/调试** 工作流放进一个专用侧边栏中。
 
 它适合已经使用 `CMakePresets.json` 管理构建配置，并希望从当前源码文件快速回到所属可执行目标的人群。
 
@@ -66,7 +64,7 @@
 ### 通过命令行安装
 
 ```bash
-code --install-extension psgmrunner-0.0.4.vsix
+code --install-extension cmakerunner-0.0.8.vsix
 ```
 
 ## 快速上手
@@ -77,7 +75,7 @@ code --install-extension psgmrunner-0.0.4.vsix
 
 ### 2. 选择 Preset
 
-打开活动栏中的 `psgmrunner`，然后在 **Presets** 视图中选择一个 configure preset。
+打开活动栏中的 `cmakerunner`，然后在 **Presets** 视图中选择一个 configure preset。
 
 ### 3. 配置并发现目标
 
@@ -119,14 +117,14 @@ code --install-extension psgmrunner-0.0.4.vsix
 
 当前扩展提供以下命令：
 
-- `psgmrunner.refresh`：重新加载 preset，并刷新当前 targets 视图
-- `psgmrunner.selectPreset`：选择当前 configure preset
-- `psgmrunner.buildPreset`：对选中的 preset 执行 configure 并刷新目标
-- `psgmrunner.buildTarget`：构建解析到的目标
-- `psgmrunner.runTarget`：构建并运行解析到的目标
-- `psgmrunner.debugTarget`：构建并调试解析到的目标
-- `psgmrunner.filterTargets`：过滤可见目标和源码节点
-- `psgmrunner.clearTargetFilter`：清除当前目标过滤条件
+- `cmakerunner.refresh`：重新加载 preset，并刷新当前 targets 视图
+- `cmakerunner.selectPreset`：选择当前 configure preset
+- `cmakerunner.buildPreset`：对选中的 preset 执行 configure 并刷新目标
+- `cmakerunner.buildTarget`：构建解析到的目标
+- `cmakerunner.runTarget`：构建并运行解析到的目标
+- `cmakerunner.debugTarget`：构建并调试解析到的目标
+- `cmakerunner.filterTargets`：过滤可见目标和源码节点
+- `cmakerunner.clearTargetFilter`：清除当前目标过滤条件
 
 ## 配置说明
 
@@ -134,10 +132,10 @@ code --install-extension psgmrunner-0.0.4.vsix
 
 | 配置项 | 默认值 | 说明 |
 | --- | --- | --- |
-| `psgmrunner.tasks.presetConfigureCommandTemplate` | `cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON` | preset configure 使用的命令模板 |
-| `psgmrunner.tasks.buildCommandTemplate` | `cmake --build ${buildDir}${configurationArgument} --target ${target}` | 目标构建使用的命令模板 |
-| `psgmrunner.tasks.runCommandTemplate` | `${executableCommand}` | 目标运行使用的命令模板 |
-| `psgmrunner.tasks.clearTerminalBeforeRun` | `true` | build 或 run 前是否清理共享终端 |
+| `cmakerunner.tasks.presetConfigureCommandTemplate` | `cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON` | preset configure 使用的命令模板 |
+| `cmakerunner.tasks.buildCommandTemplate` | `cmake --build ${buildDir}${configurationArgument} --target ${target}` | 目标构建使用的命令模板 |
+| `cmakerunner.tasks.runCommandTemplate` | `${executableCommand}` | 目标运行使用的命令模板 |
+| `cmakerunner.tasks.clearTerminalBeforeRun` | `true` | build 或 run 前是否清理共享终端 |
 
 ### configure 模板支持的变量
 
@@ -163,10 +161,10 @@ code --install-extension psgmrunner-0.0.4.vsix
 
 ```json
 {
-  "psgmrunner.tasks.presetConfigureCommandTemplate": "cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-  "psgmrunner.tasks.buildCommandTemplate": "cmake --build ${buildDir}${configurationArgument} --target ${target}",
-  "psgmrunner.tasks.runCommandTemplate": "${executableCommand}",
-  "psgmrunner.tasks.clearTerminalBeforeRun": true
+  "cmakerunner.tasks.presetConfigureCommandTemplate": "cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+  "cmakerunner.tasks.buildCommandTemplate": "cmake --build ${buildDir}${configurationArgument} --target ${target}",
+  "cmakerunner.tasks.runCommandTemplate": "${executableCommand}",
+  "cmakerunner.tasks.clearTerminalBeforeRun": true
 }
 ```
 
@@ -176,7 +174,7 @@ code --install-extension psgmrunner-0.0.4.vsix
 
 ```json
 {
-  "psgmrunner.tasks.runCommandTemplate": "& ${quotedExecutablePath}"
+  "cmakerunner.tasks.runCommandTemplate": "& ${quotedExecutablePath}"
 }
 ```
 

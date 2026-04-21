@@ -1,10 +1,11 @@
 {
-    "name": "psgmrunner",
-    "displayName": "psgmrunner",
+    "name": "cmakerunner",
+    "displayName": "CMake Runner",
     "description": "Preset, target, build, run, and debug workflow for CMake-based C++ projects.",
     "version": "0.0.8",
     "publisher": "local",
     "license": "MIT",
+    "icon": "resources/cmake-runner.png",
     "engines": {
         "vscode": "^1.85.0"
     },
@@ -36,27 +37,27 @@
     "contributes": {
         "commands": [
             {
-                "command": "psgmrunner.refresh",
+                "command": "cmakerunner.refresh",
                 "title": "Refresh"
             },
             {
-                "command": "psgmrunner.selectPreset",
+                "command": "cmakerunner.selectPreset",
                 "title": "Select Preset"
             },
             {
-                "command": "psgmrunner.buildPreset",
+                "command": "cmakerunner.buildPreset",
                 "title": "Build"
             },
             {
-                "command": "psgmrunner.rebuildPreset",
+                "command": "cmakerunner.rebuildPreset",
                 "title": "Rebuild"
             },
             {
-                "command": "psgmrunner.buildTarget",
+                "command": "cmakerunner.buildTarget",
                 "title": "Build"
             },
             {
-                "command": "psgmrunner.buildTargetFromCurrentFile",
+                "command": "cmakerunner.buildTargetFromCurrentFile",
                 "title": "Build Target From Current File",
                 "icon": {
                     "light": "resources/build-current-file-light.svg",
@@ -64,39 +65,39 @@
                 }
             },
             {
-                "command": "psgmrunner.filterTargets",
+                "command": "cmakerunner.filterTargets",
                 "title": "Filter"
             },
             {
-                "command": "psgmrunner.clearTargetFilter",
+                "command": "cmakerunner.clearTargetFilter",
                 "title": "Clear Filter"
             },
             {
-                "command": "psgmrunner.runTarget",
+                "command": "cmakerunner.runTarget",
                 "title": "Run"
             },
             {
-                "command": "psgmrunner.debugTarget",
+                "command": "cmakerunner.debugTarget",
                 "title": "Debug"
             }
         ],
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "psgmrunner",
-                    "title": "psgmrunner",
+                    "id": "cmakerunner",
+                    "title": "cmakerunner",
                     "icon": "resources/cmake-runner.svg"
                 }
             ]
         },
         "views": {
-            "psgmrunner": [
+            "cmakerunner": [
                 {
-                    "id": "psgmrunner.presets",
+                    "id": "cmakerunner.presets",
                     "name": "Presets"
                 },
                 {
-                    "id": "psgmrunner.targets",
+                    "id": "cmakerunner.targets",
                     "name": "Targets"
                 }
             ]
@@ -104,80 +105,80 @@
         "menus": {
             "view/title": [
                 {
-                    "command": "psgmrunner.refresh",
-                    "when": "view == psgmrunner.presets || view == psgmrunner.targets",
+                    "command": "cmakerunner.refresh",
+                    "when": "view == cmakerunner.presets || view == cmakerunner.targets",
                     "group": "navigation"
                 },
                 {
-                    "command": "psgmrunner.filterTargets",
-                    "when": "view == psgmrunner.targets",
+                    "command": "cmakerunner.filterTargets",
+                    "when": "view == cmakerunner.targets",
                     "group": "navigation@1"
                 },
                 {
-                    "command": "psgmrunner.clearTargetFilter",
-                    "when": "view == psgmrunner.targets && psgmrunner.targetsFilterActive",
+                    "command": "cmakerunner.clearTargetFilter",
+                    "when": "view == cmakerunner.targets && cmakerunner.targetsFilterActive",
                     "group": "navigation@2"
                 }
             ],
             "editor/title": [
                 {
-                    "command": "psgmrunner.buildTargetFromCurrentFile",
+                    "command": "cmakerunner.buildTargetFromCurrentFile",
                     "when": "resourceScheme == file",
                     "group": "navigation@1"
                 }
             ],
             "view/item/context": [
                 {
-                    "command": "psgmrunner.buildPreset",
-                    "when": "view == psgmrunner.presets && viewItem == preset",
+                    "command": "cmakerunner.buildPreset",
+                    "when": "view == cmakerunner.presets && viewItem == preset",
                     "group": "inline@1"
                 },
                 {
-                    "command": "psgmrunner.rebuildPreset",
-                    "when": "view == psgmrunner.presets && viewItem == preset",
+                    "command": "cmakerunner.rebuildPreset",
+                    "when": "view == cmakerunner.presets && viewItem == preset",
                     "group": "inline@2"
                 },
                 {
-                    "command": "psgmrunner.buildTarget",
-                    "when": "view == psgmrunner.targets && viewItem == target",
+                    "command": "cmakerunner.buildTarget",
+                    "when": "view == cmakerunner.targets && viewItem == target",
                     "group": "inline@1"
                 },
                 {
-                    "command": "psgmrunner.runTarget",
-                    "when": "view == psgmrunner.targets && viewItem == target",
+                    "command": "cmakerunner.runTarget",
+                    "when": "view == cmakerunner.targets && viewItem == target",
                     "group": "inline@2"
                 },
                 {
-                    "command": "psgmrunner.debugTarget",
-                    "when": "view == psgmrunner.targets && viewItem == target",
+                    "command": "cmakerunner.debugTarget",
+                    "when": "view == cmakerunner.targets && viewItem == target",
                     "group": "inline@3"
                 }
             ]
         },
         "configuration": {
-            "title": "psgmrunner",
+            "title": "cmakerunner",
             "properties": {
-                "psgmrunner.tasks.buildCommandTemplate": {
+                "cmakerunner.tasks.buildCommandTemplate": {
                     "type": "string",
                     "default": "cmake --build ${buildDir}${configurationArgument} --target ${target}",
                     "description": "Build command template. Supports ${buildDir}, ${preset}, ${target}, ${sourceDir}, ${buildPreset}, ${configuration}, ${configurationArgument}, ${buildPresetArgument}, ${executablePath}, ${quotedExecutablePath}, and ${executableCommand}."
                 },
-                "psgmrunner.cmakePath": {
+                "cmakerunner.cmakePath": {
                     "type": "string",
                     "default": "",
                     "description": "Optional path to cmake executable used for preset discovery (for example a Visual Studio bundled CMake path). Leave empty to use automatic detection."
                 },
-                "psgmrunner.tasks.presetConfigureCommandTemplate": {
+                "cmakerunner.tasks.presetConfigureCommandTemplate": {
                     "type": "string",
                     "default": "cmake --preset ${preset} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
                     "description": "Preset configure command template. Supports ${buildDir}, ${preset}, and ${sourceDir}. The default also enables compile_commands.json generation."
                 },
-                "psgmrunner.tasks.runCommandTemplate": {
+                "cmakerunner.tasks.runCommandTemplate": {
                     "type": "string",
                     "default": "${executableCommand}",
                     "description": "Run command template. Supports ${buildDir}, ${preset}, ${target}, ${sourceDir}, ${buildPreset}, ${configuration}, ${configurationArgument}, ${buildPresetArgument}, ${executablePath}, ${quotedExecutablePath}, and ${executableCommand}."
                 },
-                "psgmrunner.tasks.clearTerminalBeforeRun": {
+                "cmakerunner.tasks.clearTerminalBeforeRun": {
                     "type": "boolean",
                     "default": true,
                     "description": "Clear the shared terminal before starting a build or run task."

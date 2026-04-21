@@ -9,7 +9,7 @@ export class PresetTreeItem extends vscode.TreeItem {
     this.contextValue = 'preset';
     this.iconPath = isSelected ? new vscode.ThemeIcon('check') : new vscode.ThemeIcon('gear');
     this.command = {
-      command: 'psgmrunner.selectPreset',
+      command: 'cmakerunner.selectPreset',
       title: 'Select Preset',
       arguments: [this],
     };

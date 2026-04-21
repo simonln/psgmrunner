@@ -137,7 +137,7 @@ describe('extension commands', () => {
     };
 
     try {
-      await vscode.commands.executeCommand('psgmrunner.buildTargetFromCurrentFile');
+      await vscode.commands.executeCommand('cmakerunner.buildTargetFromCurrentFile');
     } finally {
       workflowModule.WorkflowManager.prototype.buildTarget = originalBuildTarget;
     }
@@ -156,9 +156,9 @@ describe('extension commands', () => {
       return items?.[2];
     };
 
-    await vscode.commands.executeCommand('psgmrunner.filterTargets');
+    await vscode.commands.executeCommand('cmakerunner.filterTargets');
 
-    const targetsTreeView = mockedVscode.__mock.createdTreeViews.get('psgmrunner.targets');
+    const targetsTreeView = mockedVscode.__mock.createdTreeViews.get('cmakerunner.targets');
     assert.ok(targetsTreeView);
     assert.deepStrictEqual(pickedLabels, ['$(filter) Custom Text Filter', 'app', 'demo']);
     assert.strictEqual(targetsTreeView?.description, 'Filter: demo');

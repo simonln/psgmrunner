@@ -173,10 +173,10 @@ export class PresetProvider {
       return this.resolvedCMakeExecutable;
     }
 
-    const configuredPath = vscode.workspace.getConfiguration('psgmrunner').get<string>('cmakePath', '').trim();
+    const configuredPath = vscode.workspace.getConfiguration('cmakerunner').get<string>('cmakePath', '').trim();
     if (configuredPath) {
       if (path.isAbsolute(configuredPath) && !fs.existsSync(configuredPath)) {
-        this.logger.warn(`Configured psgmrunner.cmakePath does not exist: ${configuredPath}`);
+        this.logger.warn(`Configured cmakerunner.cmakePath does not exist: ${configuredPath}`);
       } else {
         this.resolvedCMakeExecutable = configuredPath;
         return configuredPath;
