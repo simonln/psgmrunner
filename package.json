@@ -2,7 +2,7 @@
     "name": "psgmrunner",
     "displayName": "psgmrunner",
     "description": "Preset, target, build, run, and debug workflow for CMake-based C++ projects.",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "publisher": "local",
     "license": "MIT",
     "engines": {
