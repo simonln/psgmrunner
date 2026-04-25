@@ -163,4 +163,22 @@ describe('extension commands', () => {
     assert.deepStrictEqual(pickedLabels, ['$(filter) Custom Text Filter', 'app', 'demo']);
     assert.strictEqual(targetsTreeView?.description, 'Filter: demo');
   });
+
+  it('filterTargets exposes source file paths in quick pick details for search', async () => {
+    await activateExtension();
+
+    const pickedItems: Array<{ label: string; detail?: string }> = [];
+    (vscode.window as any).showQuickPick = async (items: readonly { label: string; detail?: string }[]) => {
+      pickedItems.push(...items as Array<{ label: string; detail?: string }>);
+      return undefined;
+    };
+
+    await vscode.commands.executeCommand('cmakerunner.filterTargets');
+
+    const appItem = pickedItems.find((item) => item.label === 'app');
+    const demoItem = pickedItems.find((item) => item.label === 'demo');
+    assert.ok(appItem?.detail?.includes(path.join('src', 'app.cpp')));
+    assert.ok(demoItem?.detail?.includes(path.join('src', 'demo.cpp')));
+    assert.ok(appItem?.detail?.includes(path.join('src', 'common.cpp')));
+  });
 });

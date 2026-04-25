@@ -28,8 +28,8 @@ export class TaskExecutionEngine {
     return this.executeTask(command, label, ['$gcc', '$msCompile'], reveal, vscode.TaskGroup.Build);
   }
 
-  public async executeRun(command: string, label: string): Promise<TaskExecutionResult> {
-    return this.executeTask(command, label, [], vscode.TaskRevealKind.Always);
+  public async executeRun(command: string, label: string, runDirectory?: string): Promise<TaskExecutionResult> {
+    return this.executeTask(this.wrapRunCommand(command, runDirectory), label, [], vscode.TaskRevealKind.Always);
   }
 
   private async executeTask(
@@ -114,6 +114,20 @@ export class TaskExecutionEngine {
       command: wrappedCommand,
       options,
     };
+  }
+
+  private wrapRunCommand(command: string, runDirectory?: string): string {
+    if (!runDirectory) {
+      return command;
+    }
+
+    if (process.platform === 'win32') {
+      const escapedRunDirectory = runDirectory.replace(/'/g, "''");
+      return `Push-Location '${escapedRunDirectory}'; try { ${command} } finally { Pop-Location }`;
+    }
+
+    const escapedRunDirectory = runDirectory.replace(/'/g, `'\\''`);
+    return `__cmakerunner_oldpwd="$PWD"; cd '${escapedRunDirectory}' && ${command}; cd "$__cmakerunner_oldpwd"`;
   }
 }
 

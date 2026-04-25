@@ -135,7 +135,7 @@ export class TargetTreeDataProvider implements vscode.TreeDataProvider<Node> {
   }
 
   private matchesTarget(target: TargetInfo): boolean {
-    const query = this.filterText.toLowerCase();
+    const query = this.normalizeFilterQuery(this.filterText);
     if (!query) {
       return true;
     }
@@ -144,7 +144,7 @@ export class TargetTreeDataProvider implements vscode.TreeDataProvider<Node> {
   }
 
   private getVisibleSourceFiles(target: TargetInfo): string[] {
-    const query = this.filterText.toLowerCase();
+    const query = this.normalizeFilterQuery(this.filterText);
     if (!query || this.matchesTargetName(target, query)) {
       return target.sourceFiles;
     }
@@ -153,14 +153,18 @@ export class TargetTreeDataProvider implements vscode.TreeDataProvider<Node> {
   }
 
   private matchesTargetName(target: TargetInfo, query: string): boolean {
-    return target.displayName.toLowerCase().includes(query)
-      || target.name.toLowerCase().includes(query)
-      || path.basename(target.guessedExecutablePath).toLowerCase().includes(query);
+    return this.normalizeFilterQuery(target.displayName).includes(query)
+      || this.normalizeFilterQuery(target.name).includes(query)
+      || this.normalizeFilterQuery(path.basename(target.guessedExecutablePath)).includes(query);
   }
 
   private matchesSourcePath(sourcePath: string, query: string): boolean {
-    return path.basename(sourcePath).toLowerCase().includes(query)
-      || relativeDisplayPath(sourcePath, this.sourceDir).toLowerCase().includes(query);
+    return this.normalizeFilterQuery(path.basename(sourcePath)).includes(query)
+      || this.normalizeFilterQuery(relativeDisplayPath(sourcePath, this.sourceDir)).includes(query);
+  }
+
+  private normalizeFilterQuery(value: string): string {
+    return normalizePath(value).replace(/\\/g, '/');
   }
 
   private createSourceKey(targetId: string, sourcePath: string): string {

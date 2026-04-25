@@ -31,7 +31,7 @@ describe('workflow manager', () => {
     };
     const taskExecutionEngine = {
       executeBuild: async () => ({ exitCode: 0 }),
-      executeRun: async () => ({ exitCode: 0 }),
+      executeRun: async (_command?: string, _label?: string, _cwd?: string) => ({ exitCode: 0 }),
     };
     const logger = {
       info: (message: string) => calls.push(`info:${message}`),
@@ -157,13 +157,16 @@ describe('workflow manager', () => {
   it('runTarget executes directly when buildFirst is false', async () => {
     const deps = createDeps();
     let runCount = 0;
-    deps.taskExecutionEngine.executeRun = async () => {
+    let runDirectory = '';
+    deps.taskExecutionEngine.executeRun = async (_command?: string, _label?: string, cwd?: string) => {
       runCount += 1;
+      runDirectory = cwd ?? '';
       return { exitCode: 0 };
     };
     const manager = new WorkflowManager(deps.configurationManager as never, deps.taskExecutionEngine as never, deps.logger as never);
     await manager.runTarget(preset, target, false);
     assert.strictEqual(runCount, 1);
+    assert.strictEqual(runDirectory, preset.binaryDir);
   });
 
   it('debugTarget warns when debug session does not start', async () => {

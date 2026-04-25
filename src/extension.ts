@@ -9,6 +9,7 @@ import { TaskExecutionEngine } from './services/taskExecutionEngine';
 import { WorkflowManager } from './services/workflowManager';
 import { PresetTreeDataProvider, PresetTreeItem } from './ui/presetTreeDataProvider';
 import { SourceTreeItem, TargetTreeDataProvider, TargetTreeItem } from './ui/targetTreeDataProvider';
+import { relativeDisplayPath } from './utils';
 
 interface TargetQuickPickItem extends vscode.QuickPickItem {
   readonly target?: TargetInfo;
@@ -185,27 +186,21 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     return documentUri?.scheme === 'file' ? documentUri.fsPath : undefined;
   };
 
-  const getAutoFilteredTargets = (): { targets: TargetInfo[]; activeFilePath?: string; autoFiltered: boolean } => {
+  const getAutoFilteredTargets = (userActiveFile: boolean): TargetInfo[] => {
     const targets = mappingEngine.getTargets();
-    const activeFilePath = getActiveEditorFilePath();
-    if (!activeFilePath) {
-      return { targets, activeFilePath, autoFiltered: false };
+    if (userActiveFile) {
+        const activeFilePath = getActiveEditorFilePath();
+            if (!activeFilePath) {
+            return targets;
+        }
+
+        const mappedTargets = mappingEngine.findTargetsBySource(activeFilePath);
+        if (mappedTargets.length > 0) {
+            return mappedTargets;
+        }
     }
 
-    const mappedTargets = mappingEngine.findTargetsBySource(activeFilePath);
-    if (mappedTargets.length > 0) {
-      return {
-        targets: mappedTargets,
-        activeFilePath,
-        autoFiltered: true,
-      };
-    }
-
-    return {
-      targets,
-      activeFilePath,
-      autoFiltered: false,
-    };
+    return targets;
   };
 
   const ensureDiscoveredTargets = (targets: TargetInfo[]): boolean => {
@@ -220,35 +215,26 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     return false;
   };
 
-  const pickTarget = async (options?: { includeCustomTextFilter?: boolean }): Promise<TargetQuickPickItem | undefined> => {
-    const { targets, activeFilePath, autoFiltered } = getAutoFilteredTargets();
+  const pickTarget = async (options?: { userActiveFile?: boolean }): Promise<TargetQuickPickItem | undefined> => {
+    const targets = getAutoFilteredTargets(options?.userActiveFile == true);
     if (!ensureDiscoveredTargets(targets)) {
       return undefined;
     }
 
+    const quickPickSourceDir = currentPreset?.sourceDir ?? workspaceRoot;
     const items: TargetQuickPickItem[] = targets.map((target) => ({
       label: target.displayName,
       description: path.basename(target.guessedExecutablePath),
-      detail: `${target.sourceFiles.length} source file${target.sourceFiles.length === 1 ? '' : 's'}`,
+      detail: `${target.sourceFiles.length} source file${target.sourceFiles.length === 1 ? '' : 's'}: ${target.sourceFiles
+        .map((sourcePath) => relativeDisplayPath(sourcePath, quickPickSourceDir))
+        .join(', ')}`,
       target,
     }));
 
-    if (options?.includeCustomTextFilter) {
-      items.unshift({
-        label: '$(filter) Custom Text Filter',
-        description: 'Enter a manual target or source-file filter',
-        action: 'customTextFilter',
-      });
-    }
-
-    const activeFileName = activeFilePath ? path.basename(activeFilePath) : undefined;
-    const placeHolder = autoFiltered && activeFileName
-      ? `Select a target mapped from ${activeFileName}`
-      : activeFileName
-        ? `No mapped target for ${activeFileName}. Select from all discovered targets`
-        : 'Select a discovered executable target';
-
+    const prompt = 'Filter targets by executable name or C/C++ source file name';
+    const placeHolder= 'Example: app, main.cpp, demo.exe, src/test.cpp';
     return vscode.window.showQuickPick(items, {
+      prompt,
       placeHolder,
       matchOnDescription: true,
       matchOnDetail: true,
@@ -284,7 +270,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       await refresh(currentPreset?.name);
     }),
     vscode.commands.registerCommand('cmakerunner.filterTargets', async () => {
-      const pick = await pickTarget({ includeCustomTextFilter: true });
+      const pick = await pickTarget();
       if (!pick) {
         return;
       }
@@ -293,18 +279,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         await applyTargetFilter(pick.target.displayName);
         return;
       }
-
-      const filterText = await vscode.window.showInputBox({
-        prompt: 'Filter targets by executable name or C/C++ source file name',
-        placeHolder: 'Example: app, main.cpp, demo.exe',
-        value: targetTreeDataProvider.getFilterText(),
-      });
-
-      if (filterText === undefined) {
-        return;
-      }
-
-      await applyTargetFilter(filterText);
     }),
     vscode.commands.registerCommand('cmakerunner.clearTargetFilter', async () => {
       await applyTargetFilter('');
@@ -403,9 +377,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         return;
       }
 
-      const pick = await pickTarget();
+      const pick = await pickTarget({ userActiveFile: true });
       if (!pick?.target) {
         return;
+      }
+
+    // apply filter to target view
+    if (pick.target) {
+        await applyTargetFilter(pick.target.displayName);
       }
 
       await workflowManager.buildTarget(preset, pick.target);

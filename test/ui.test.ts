@@ -161,6 +161,26 @@ describe('ui', () => {
       assert.strictEqual(provider.getVisibleTargetCount(), 1);
     });
 
+    it('should filter targets by source relative path with either separator', () => {
+      const provider = new TargetTreeDataProvider();
+      const targets: TargetInfo[] = [
+        {
+          id: 'myapp',
+          name: 'myapp',
+          displayName: 'My App',
+          sourceFiles: ['/src/app/main.cpp'],
+          guessedExecutablePath: '/build/myapp',
+        },
+      ];
+
+      provider.setTargets(targets, '/src', undefined);
+      provider.setFilterText('app/main.cpp');
+      assert.strictEqual(provider.getVisibleTargetCount(), 1);
+
+      provider.setFilterText('app\\main.cpp');
+      assert.strictEqual(provider.getVisibleTargetCount(), 1);
+    });
+
     it('should clear filter', () => {
       const provider = new TargetTreeDataProvider();
       const targets: TargetInfo[] = [

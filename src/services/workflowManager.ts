@@ -77,7 +77,7 @@ export class WorkflowManager {
     const runCommand = this.configurationManager.getRunCommand(runVariables);
     const runLabel = `Run ${target.displayName} [${preset.name}]`;
     this.logger.info(`Launching run task for target ${target.name}`);
-    await this.taskExecutionEngine.executeRun(runCommand, runLabel);
+    await this.taskExecutionEngine.executeRun(runCommand, runLabel, preset.binaryDir);
   }
 
   public async debugTarget(preset: PresetInfo, target: TargetInfo): Promise<void> {
