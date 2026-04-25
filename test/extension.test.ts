@@ -153,14 +153,14 @@ describe('extension commands', () => {
     (vscode.window as any).showQuickPick = async (items: readonly { label: string }[]) => {
       const quickPickItems = items as Array<{ label: string }>;
       pickedLabels.push(...quickPickItems.map((item) => item.label));
-      return items?.[2];
+      return quickPickItems.find((item) => item.label === 'demo');
     };
 
     await vscode.commands.executeCommand('cmakerunner.filterTargets');
 
     const targetsTreeView = mockedVscode.__mock.createdTreeViews.get('cmakerunner.targets');
     assert.ok(targetsTreeView);
-    assert.deepStrictEqual(pickedLabels, ['$(filter) Custom Text Filter', 'app', 'demo']);
+    assert.deepStrictEqual(pickedLabels, ['app', 'demo', 'helper']);
     assert.strictEqual(targetsTreeView?.description, 'Filter: demo');
   });
 
